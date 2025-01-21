@@ -34,6 +34,36 @@ const MOCK_ISSUES: Issue[] = [
     createdAt: new Date().toISOString(),
     points: 100,
   },
+  {
+    id: "4",
+    title: "Graffiti on Public Building",
+    description: "New graffiti appeared on the community center wall",
+    status: "pending",
+    type: "vandalism",
+    location: "Community Center",
+    createdAt: new Date().toISOString(),
+    points: 45,
+  },
+  {
+    id: "5",
+    title: "Clogged Storm Drain",
+    description: "Storm drain is blocked causing water accumulation",
+    status: "in-progress",
+    type: "drainage",
+    location: "Maple St & 2nd Ave",
+    createdAt: new Date().toISOString(),
+    points: 60,
+  },
+  {
+    id: "6",
+    title: "Fallen Tree Branch",
+    description: "Large branch blocking sidewalk after storm",
+    status: "pending",
+    type: "hazard",
+    location: "Pine Street Park",
+    createdAt: new Date().toISOString(),
+    points: 55,
+  },
 ];
 
 export default function Index() {
