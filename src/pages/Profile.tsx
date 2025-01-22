@@ -1,3 +1,5 @@
+import { Rewards } from "@/components/Rewards";
+
 export default function Profile() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0 md:pt-20">
