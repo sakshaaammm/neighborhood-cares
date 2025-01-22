@@ -7,7 +7,7 @@ export default function Profile() {
           <p className="text-muted-foreground">Your activity and achievements</p>
         </header>
         
-        <section className="space-y-4">
+        <section className="space-y-8">
           <div className="glass-card p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Your Stats</h2>
             <div className="space-y-2">
@@ -16,6 +16,8 @@ export default function Profile() {
               <p>Issues Resolved: 1</p>
             </div>
           </div>
+
+          <Rewards points={225} />
         </section>
       </main>
     </div>
