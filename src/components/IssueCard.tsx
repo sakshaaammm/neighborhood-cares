@@ -1,6 +1,6 @@
-import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
 
 export type Issue = {
   id: string;
@@ -11,54 +11,63 @@ export type Issue = {
   location: string;
   createdAt: string;
   points: number;
+  media?: string; // Optional media URL
 };
 
 export function IssueCard({ issue }: { issue: Issue }) {
-  return (
-    <Card className="glass-card hover-scale overflow-hidden">
-      <div className="p-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="font-semibold text-lg">{issue.title}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{issue.description}</p>
-          </div>
-          <StatusBadge status={issue.status} />
-        </div>
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">{issue.location}</span>
-          <span className="text-accent font-medium">+{issue.points} points</span>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function StatusBadge({ status }: { status: Issue["status"] }) {
-  const statusConfig = {
-    pending: {
-      icon: AlertCircle,
-      text: "Pending",
-      className: "bg-yellow-500/10 text-yellow-500",
-    },
-    "in-progress": {
-      icon: Clock,
-      text: "In Progress",
-      className: "bg-blue-500/10 text-blue-500",
-    },
-    resolved: {
-      icon: CheckCircle2,
-      text: "Resolved",
-      className: "bg-green-500/10 text-green-500",
-    },
+  const getStatusColor = (status: Issue["status"]) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-500";
+      case "in-progress":
+        return "bg-blue-500";
+      case "resolved":
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
+    }
   };
 
-  const config = statusConfig[status];
-  const Icon = config.icon;
-
   return (
-    <div className={cn("flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium", config.className)}>
-      <Icon className="w-3.5 h-3.5" />
-      <span>{config.text}</span>
+    <div className="space-y-4">
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="text-lg font-semibold">{issue.title}</h3>
+          <p className="text-sm text-muted-foreground">{issue.description}</p>
+        </div>
+        <Badge variant="outline" className={`${getStatusColor(issue.status)} text-white`}>
+          {issue.status}
+        </Badge>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <p className="text-muted-foreground">Location</p>
+          <p>{issue.location}</p>
+        </div>
+        <div>
+          <p className="text-muted-foreground">Type</p>
+          <p>{issue.type}</p>
+        </div>
+        <div>
+          <p className="text-muted-foreground">Points</p>
+          <p>{issue.points}</p>
+        </div>
+        <div>
+          <p className="text-muted-foreground">Reported</p>
+          <p>{formatDistanceToNow(new Date(issue.createdAt))} ago</p>
+        </div>
+      </div>
+      
+      {issue.media && (
+        <div className="mt-4">
+          <img 
+            src={issue.media} 
+            alt="Issue media" 
+            className="rounded-lg max-h-48 object-cover"
+          />
+        </div>
+      )}
     </div>
   );
 }

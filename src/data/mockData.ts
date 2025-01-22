@@ -10,6 +10,7 @@ export const MOCK_ISSUES: Issue[] = [
     location: "123 Main St",
     createdAt: new Date().toISOString(),
     points: 50,
+    media: "https://placehold.co/600x400",
   },
   {
     id: "2",
