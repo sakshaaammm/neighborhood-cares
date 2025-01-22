@@ -5,32 +5,66 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { addNewIssue } from "@/data/mockData";
+import { Upload } from "lucide-react";
 
 export default function Report() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    media: "",
-    location: "Unknown Location", // Default location
-    type: "general" // Default type
+    location: "Unknown Location",
+    type: "general"
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      const newIssue = addNewIssue(formData);
-      console.log("Form submitted:", newIssue);
-      toast.success("Issue reported successfully!");
-      
-      // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        media: "",
-        location: "Unknown Location",
-        type: "general"
-      });
+      // Convert file to data URL
+      if (selectedFile) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const newIssue = addNewIssue({
+            ...formData,
+            media: reader.result as string
+          });
+          console.log("Form submitted:", newIssue);
+          toast.success("Issue reported successfully!");
+          
+          // Reset form
+          setFormData({
+            title: "",
+            description: "",
+            location: "Unknown Location",
+            type: "general"
+          });
+          setSelectedFile(null);
+          setPreviewUrl("");
+        };
+        reader.readAsDataURL(selectedFile);
+      } else {
+        const newIssue = addNewIssue(formData);
+        console.log("Form submitted:", newIssue);
+        toast.success("Issue reported successfully!");
+        
+        // Reset form
+        setFormData({
+          title: "",
+          description: "",
+          location: "Unknown Location",
+          type: "general"
+        });
+      }
     } catch (error) {
       toast.error("Failed to submit report");
       console.error("Error submitting form:", error);
@@ -72,14 +106,22 @@ export default function Report() {
 
             <div>
               <label htmlFor="media" className="block text-sm font-medium mb-2">
-                Media URL (Optional)
+                Upload Image (Optional)
               </label>
-              <Input
-                id="media"
-                value={formData.media}
-                onChange={(e) => setFormData(prev => ({ ...prev, media: e.target.value }))}
-                placeholder="Enter media URL"
-              />
+              <div className="flex items-center gap-4">
+                <Input
+                  id="media"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+              </div>
+              {previewUrl && (
+                <div className="mt-4">
+                  <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-cover" />
+                </div>
+              )}
             </div>
 
             <Button type="submit" className="w-full">
