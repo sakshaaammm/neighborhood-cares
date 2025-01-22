@@ -63,3 +63,17 @@ export const MOCK_ISSUES: Issue[] = [
     points: 55,
   },
 ];
+
+// Function to add a new issue
+export const addNewIssue = (issue: Omit<Issue, "id" | "status" | "points" | "createdAt">) => {
+  const newIssue: Issue = {
+    ...issue,
+    id: (MOCK_ISSUES.length + 1).toString(),
+    status: "pending",
+    points: 50, // Default points for new issues
+    createdAt: new Date().toISOString(),
+  };
+  
+  MOCK_ISSUES.unshift(newIssue); // Add to beginning of array
+  return newIssue;
+};
