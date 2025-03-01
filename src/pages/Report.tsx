@@ -9,7 +9,7 @@ import { addNewIssue } from "@/data/mockData";
 import { 
   Upload, 
   MapPin, 
-  Cat,
+  Cat, // Replaced Paw with Cat 
   AlertTriangle, 
   Heart, 
   Construction, 
@@ -17,13 +17,13 @@ import {
   Trash2
 } from "lucide-react";
 import { 
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Navbar } from "@/components/Navbar";
 
 const PROBLEM_TYPES = {
   general: {
@@ -34,7 +34,7 @@ const PROBLEM_TYPES = {
   stray_animals: {
     label: "Stray Animals",
     description: "I've spotted stray animals that need attention. They appear to be [breed/type] and are located near [specific location].",
-    icon: Cat
+    icon: Cat // Replaced Paw with Cat
   },
   suspicious_activity: {
     label: "Suspicious Activity",
@@ -100,6 +100,7 @@ export default function Report() {
           const { latitude, longitude } = position.coords;
           const locationString = `Lat: ${latitude.toFixed(6)}, Long: ${longitude.toFixed(6)}`;
           
+          // Attempt to get a readable address (would require a geocoding service in a real app)
           setFormData(prev => ({
             ...prev,
             location: locationString
@@ -167,87 +168,77 @@ export default function Report() {
   const ProblemIcon = PROBLEM_TYPES[formData.type as keyof typeof PROBLEM_TYPES]?.icon || AlertTriangle;
 
   return (
-    <div className="min-h-screen relative pb-20 md:pb-0 md:pt-20" 
-         style={{ 
-           backgroundImage: "url('/lovable-uploads/dbd7d788-725f-4a8c-a3c7-cdb0875e9140.png')", 
-           backgroundSize: "cover", 
-           backgroundPosition: "center", 
-           backgroundAttachment: "fixed" 
-         }}>
-      <Navbar />
-      
-      {/* Header Section with Tabs for Problem Types */}
-      <div className="container max-w-5xl mx-auto pt-6 px-4">
-        <div className="glass-card rounded-lg p-4 mb-6 animate-fade-in">
-          <h1 className="text-3xl font-bold text-white mb-4 tracking-tight">Report an Issue</h1>
-          <p className="text-white/80 mb-6">Help make our community better by reporting issues you observe</p>
+    <div className="min-h-screen bg-background pb-20 md:pb-0 md:pt-20">
+      <main className="container max-w-lg mx-auto p-4">
+        <Card className="p-6">
+          <h1 className="text-2xl font-bold mb-6">Report an Issue</h1>
           
-          <Tabs defaultValue="general" onValueChange={handleProblemTypeChange} className="w-full">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 bg-white/10 p-1">
-              {Object.entries(PROBLEM_TYPES).map(([key, { label, icon: Icon }]) => (
-                <TabsTrigger 
-                  key={key} 
-                  value={key}
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white"
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    <Icon className="h-5 w-5" />
-                    <span className="text-xs font-medium line-clamp-1">{label}</span>
-                  </div>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-      </div>
-      
-      {/* Main Form Section */}
-      <main className="container max-w-lg mx-auto px-4 pb-16">
-        <Card className="glass-card p-6 animate-fade-in">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="type" className="block text-sm font-medium mb-2">
+                Problem Type
+              </label>
+              <Select 
+                value={formData.type} 
+                onValueChange={handleProblemTypeChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a problem type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(PROBLEM_TYPES).map(([key, { label, icon: Icon }]) => (
+                    <SelectItem key={key} value={key}>
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        <span>{label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
             <div className="flex gap-4 items-center">
-              <div className="bg-background/30 backdrop-blur-sm p-4 rounded-lg">
-                <ProblemIcon className="h-16 w-16 text-white" />
-              </div>
+              <ProblemIcon className="h-20 w-20 p-4 bg-primary/10 text-primary rounded-lg" />
               <div className="flex-1">
-                <Label htmlFor="title" className="block text-sm font-medium mb-2 text-white">
-                  Title
-                </Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Enter issue title"
-                  required
-                  className="bg-white/20 text-white placeholder:text-white/50"
-                />
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium mb-2">
+                    Title
+                  </label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Enter issue title"
+                    required
+                  />
+                </div>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="description" className="block text-sm font-medium mb-2 text-white">
+              <label htmlFor="description" className="block text-sm font-medium mb-2">
                 Description
-              </Label>
+              </label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe the issue"
                 required
-                className="min-h-[120px] bg-white/20 text-white placeholder:text-white/50"
+                className="min-h-[120px]"
               />
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <Label htmlFor="location" className="text-sm font-medium text-white">Location</Label>
+                <Label htmlFor="location" className="text-sm font-medium">Location</Label>
                 <Button 
                   type="button" 
                   variant="outline" 
                   size="sm" 
                   onClick={handleGetLocation}
                   disabled={isGettingLocation}
-                  className="bg-white/20 hover:bg-white/30 text-white border-white/30"
                 >
                   <MapPin className="h-4 w-4 mr-1" />
                   {isGettingLocation ? "Fetching..." : "Get My Location"}
@@ -258,55 +249,34 @@ export default function Report() {
                 value={formData.location}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                 placeholder="Enter location details"
-                className="bg-white/20 text-white placeholder:text-white/50"
               />
             </div>
 
             <div>
-              <Label htmlFor="media" className="block text-sm font-medium mb-2 text-white">
+              <label htmlFor="media" className="block text-sm font-medium mb-2">
                 Upload Image
-              </Label>
+              </label>
               <div className="flex items-center gap-4">
                 <Input
                   id="media"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white bg-white/20 text-white"
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                 />
               </div>
               {previewUrl && (
-                <div className="mt-4 bg-white/10 p-2 rounded-lg">
-                  <img src={previewUrl} alt="Preview" className="h-48 w-full rounded-lg object-cover" />
+                <div className="mt-4">
+                  <img src={previewUrl} alt="Preview" className="max-h-48 rounded-lg object-cover" />
                 </div>
               )}
             </div>
 
-            <Button type="submit" className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white">
+            <Button type="submit" className="w-full">
               Submit Report
             </Button>
           </form>
         </Card>
-
-        {/* Visual elements */}
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          <div className="glass-card rounded-lg p-3 hover-scale">
-            <img 
-              src="https://images.unsplash.com/photo-1615812214207-34e3be6812df?w=500&h=300&fit=crop" 
-              alt="Community cleanup" 
-              className="w-full h-32 object-cover rounded mb-2" 
-            />
-            <p className="text-xs text-white/80">Recent community cleanup event</p>
-          </div>
-          <div className="glass-card rounded-lg p-3 hover-scale">
-            <img 
-              src="https://images.unsplash.com/photo-1469571486292-b53601010b89?w=500&h=300&fit=crop" 
-              alt="Fixed street light" 
-              className="w-full h-32 object-cover rounded mb-2" 
-            />
-            <p className="text-xs text-white/80">Recently fixed streetlight</p>
-          </div>
-        </div>
       </main>
     </div>
   );
