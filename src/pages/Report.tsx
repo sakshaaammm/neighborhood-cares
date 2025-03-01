@@ -9,7 +9,7 @@ import { addNewIssue } from "@/data/mockData";
 import { 
   Upload, 
   MapPin, 
-  Paw, 
+  Cat, // Replaced Paw with Cat 
   AlertTriangle, 
   Heart, 
   Construction, 
@@ -34,7 +34,7 @@ const PROBLEM_TYPES = {
   stray_animals: {
     label: "Stray Animals",
     description: "I've spotted stray animals that need attention. They appear to be [breed/type] and are located near [specific location].",
-    icon: Paw
+    icon: Cat // Replaced Paw with Cat
   },
   suspicious_activity: {
     label: "Suspicious Activity",
